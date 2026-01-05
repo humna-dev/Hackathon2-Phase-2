@@ -103,7 +103,7 @@ export default function TaskSidebar({
       </div>
 
       {isOpen && (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-screen">
           <div className="p-4">
             <input
               type="text"
@@ -227,11 +227,12 @@ export default function TaskSidebar({
             </div>
           </div>
 
-          <div className="p-4 border-t border-slate-700/30">
+          <div className="p-4 border-t border-slate-700/30 mt-auto">
             <button
               onClick={onLogout}
-              className="w-full px-3 py-2 text-xs font-mono text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all"
+              className="flex items-center justify-center w-full px-3 py-3 text-sm font-mono text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all border border-red-500/20 hover:border-red-500/40"
             >
+              <span className="mr-2">🚪</span>
               DISCONNECT
             </button>
           </div>

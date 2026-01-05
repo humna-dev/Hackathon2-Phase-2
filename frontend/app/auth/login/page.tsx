@@ -17,37 +17,20 @@ export default function Login() {
     setIsLoading(true)
     setError('')
 
-    const payload = {
-      username,
-      password,
-    }
-
     try {
-      const response = await apiClient.post('/api/auth/login', payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await apiClient.post('/api/auth/login', {
+        username,
+        password,
       })
 
-      if (response.status === 200) {
-        const { access_token } = response.data
-        localStorage.setItem('token', access_token)
+      if (response.data.access_token) {
+        // Store token in both localStorage and cookie for proper middleware handling
+        localStorage.setItem('token', response.data.access_token)
+        document.cookie = `token=${response.data.access_token}; path=/; max-age=3600; SameSite=Strict`;
         router.push('/tasks')
-      } else {
-        setError('Login failed')
       }
     } catch (error: any) {
-      let errorMessage = 'Invalid username or password';
-
-      if (error.response?.data?.detail) {
-        errorMessage = error.response.data.detail;
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      setError(String(errorMessage));
+      setError('Invalid username or password')
     } finally {
       setIsLoading(false)
     }

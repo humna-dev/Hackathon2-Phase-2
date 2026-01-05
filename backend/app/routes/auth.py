@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 import os
 from dotenv import load_dotenv
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Load environment variables
 load_dotenv()
@@ -16,6 +17,7 @@ from app.database import get_session   # ✅ FIX 1
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+security = HTTPBearer()
 
 # JWT config
 SECRET_KEY = os.getenv("BETTER_AUTH_SECRET")
@@ -37,6 +39,27 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    session: AsyncSession = Depends(get_session)
+) -> User:
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    stmt = select(User).where(User.id == int(user_id))
+    result = await session.execute(stmt)
+    user = result.scalar_one_or_none()
+    
+    if user is None:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    return user
 
 # ---------------- AUTH ROUTES ---------------- #
 
@@ -90,3 +113,13 @@ async def login(
     )
 
     return {"access_token": token, "token_type": "bearer"}
+
+
+@router.post("/logout")
+async def logout(
+    current_user: User = Depends(get_current_user)
+):
+    # In a JWT-based system, logout is typically handled client-side
+    # by removing the token. This endpoint validates the token and 
+    # confirms successful logout.
+    return {"message": "Successfully logged out"}

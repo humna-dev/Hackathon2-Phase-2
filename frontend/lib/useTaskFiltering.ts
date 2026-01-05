@@ -33,7 +33,14 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
           filtered = filtered.filter(task => {
             if (!task.due_date) return false;
             // Parse the task due date and normalize it (remove time component)
-            const taskDate = new Date(task.due_date);
+            // Handle both date strings and date objects
+            let taskDate: Date;
+            if (typeof task.due_date === 'string') {
+              // If it's a date string like "YYYY-MM-DD", create a date object
+              taskDate = new Date(task.due_date);
+            } else {
+              taskDate = new Date(task.due_date);
+            }
             const taskDateNormalized = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate());
             console.log('Comparing dates - task:', taskDateNormalized.toISOString().split('T')[0], 'today:', todayNormalized.toISOString().split('T')[0]);
             return taskDateNormalized.getTime() === todayNormalized.getTime();
@@ -44,7 +51,14 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
           filtered = filtered.filter(task => {
             if (!task.due_date) return false;
             // Parse the task due date and normalize it (remove time component)
-            const taskDate = new Date(task.due_date);
+            // Handle both date strings and date objects
+            let taskDate: Date;
+            if (typeof task.due_date === 'string') {
+              // If it's a date string like "YYYY-MM-DD", create a date object
+              taskDate = new Date(task.due_date);
+            } else {
+              taskDate = new Date(task.due_date);
+            }
             const taskDateNormalized = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate());
             return taskDateNormalized.getTime() > todayNormalized.getTime();
           });
