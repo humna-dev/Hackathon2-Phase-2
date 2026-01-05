@@ -28,7 +28,7 @@ export default function TasksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
-  const { filteredTasks, groupedTasks, totalCount } = useTaskFiltering(tasks, lists, activeFilter, searchQuery);
+  const { filteredTasks, groupedTasks, totalCount } = useTaskFiltering(tasks, activeFilter, searchQuery, lists);
   
   const handleLogout = () => {
     logout();

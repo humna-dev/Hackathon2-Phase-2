@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Task, TaskList } from '@/lib/types';
 
-export function useTaskFiltering(tasks: Task[], lists: TaskList[] = [], activeFilter: string, searchQuery: string) {
+export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuery: string, lists: TaskList[] = []) {
   const filteredTasks = useMemo(() => {
     console.log('Filtering tasks:', { tasks: tasks.length, activeFilter, searchQuery }); // Debug log
     
