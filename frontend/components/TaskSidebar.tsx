@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Task, TaskList } from '@/lib/types';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface TaskSidebarProps {
   tasks: Task[];
@@ -30,6 +31,7 @@ export default function TaskSidebar({
 }: TaskSidebarProps) {
   const [showCreateList, setShowCreateList] = useState(false);
   const [newListName, setNewListName] = useState('');
+  const { theme, toggleTheme } = useTheme();
 
   // Calculate task counts
   const taskCounts = useMemo(() => {
@@ -99,11 +101,28 @@ export default function TaskSidebar({
             </svg>
           </button>
           {isOpen && <div className="text-sm font-mono text-cyan-400">WORKSPACE</div>}
+          {isOpen && (
+            <button
+              onClick={toggleTheme}
+              className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 flex items-center justify-center hover:from-purple-500/30 hover:to-pink-500/30 transition-all"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-indigo-800" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
       {isOpen && (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-full">
           <div className="p-4">
             <input
               type="text"
@@ -114,7 +133,7 @@ export default function TaskSidebar({
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 space-y-6">
+          <div className="flex-1 overflow-y-auto px-4 space-y-6 pb-4">
             {/* Task Sections */}
             <div>
               <div className="text-xs font-mono text-slate-400 mb-3">TASKS</div>
@@ -227,10 +246,15 @@ export default function TaskSidebar({
             </div>
           </div>
 
-          <div className="p-4 border-t border-slate-700/30 mt-auto">
+          {/* Logout Button - Fixed at bottom */}
+          <div className="p-4 border-t border-slate-700/30">
             <button
               onClick={onLogout}
-              className="flex items-center justify-center w-full px-3 py-3 text-sm font-mono text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all border border-red-500/20 hover:border-red-500/40"
+              className={`flex items-center justify-center w-full px-3 py-3 text-sm font-mono rounded-lg transition-all border ${
+                theme === 'dark'
+                  ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10 border-red-500/20 hover:border-red-500/40'
+                  : 'text-red-600 hover:text-red-700 hover:bg-red-100 border-red-300 hover:border-red-400'
+              }`}
             >
               <span className="mr-2">🚪</span>
               DISCONNECT

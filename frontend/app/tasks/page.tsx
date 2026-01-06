@@ -292,12 +292,20 @@ export default function TasksPage() {
               </h1>
               <p className="text-slate-400 text-sm mt-1">{totalCount} tasks found</p>
             </div>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
-            >
-              <span>+</span> CREATE TASK
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+              >
+                <span>+</span> CREATE TASK
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 border border-red-500/30 px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 text-red-400 hover:text-red-300"
+              >
+                <span>🚪</span> LOGOUT
+              </button>
+            </div>
           </div>
         </div>
 
