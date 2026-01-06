@@ -24,7 +24,7 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
         case 'today':
           filtered = filtered.filter(task => {
             if (!task.due_date) return false;
-            const taskDateStr = typeof task.due_date === 'string' ? task.due_date : task.due_date.toISOString().split('T')[0];
+            const taskDateStr = typeof task.due_date === 'string' ? task.due_date : new Date(task.due_date).toISOString().split('T')[0];
             const todayStr = new Date().toISOString().split('T')[0];
             return taskDateStr === todayStr;
           });
@@ -33,7 +33,7 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
         case 'upcoming':
           filtered = filtered.filter(task => {
             if (!task.due_date) return false;
-            const taskDateStr = typeof task.due_date === 'string' ? task.due_date : task.due_date.toISOString().split('T')[0];
+            const taskDateStr = typeof task.due_date === 'string' ? task.due_date : new Date(task.due_date).toISOString().split('T')[0];
             const todayStr = new Date().toISOString().split('T')[0];
             return taskDateStr > todayStr;
           });
