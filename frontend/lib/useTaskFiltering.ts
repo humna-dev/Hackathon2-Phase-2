@@ -3,8 +3,6 @@ import { Task, TaskList } from '@/lib/types';
 
 export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuery: string, lists: TaskList[] = []) {
   const filteredTasks = useMemo(() => {
-    console.log('Filtering tasks:', { tasks: tasks.length, activeFilter, searchQuery }); // Debug log
-    
     let filtered = [...tasks];
 
     // Apply search filter first
@@ -18,12 +16,6 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
 
     // Apply sidebar filter
     if (activeFilter && activeFilter !== 'all') {
-      const today = new Date();
-      // Normalize today to remove time component for comparison
-      const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-      console.log('Today normalized for comparison:', todayNormalized.toISOString().split('T')[0]); // Debug log
-
       switch (activeFilter) {
         case 'completed':
           filtered = filtered.filter(task => task.completed);
@@ -32,35 +24,18 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
         case 'today':
           filtered = filtered.filter(task => {
             if (!task.due_date) return false;
-            // Parse the task due date and normalize it (remove time component)
-            // Handle both date strings and date objects
-            let taskDate: Date;
-            if (typeof task.due_date === 'string') {
-              // If it's a date string like "YYYY-MM-DD", create a date object
-              taskDate = new Date(task.due_date);
-            } else {
-              taskDate = new Date(task.due_date);
-            }
-            const taskDateNormalized = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate());
-            console.log('Comparing dates - task:', taskDateNormalized.toISOString().split('T')[0], 'today:', todayNormalized.toISOString().split('T')[0]);
-            return taskDateNormalized.getTime() === todayNormalized.getTime();
+            const taskDateStr = typeof task.due_date === 'string' ? task.due_date : task.due_date.toISOString().split('T')[0];
+            const todayStr = new Date().toISOString().split('T')[0];
+            return taskDateStr === todayStr;
           });
           break;
 
         case 'upcoming':
           filtered = filtered.filter(task => {
             if (!task.due_date) return false;
-            // Parse the task due date and normalize it (remove time component)
-            // Handle both date strings and date objects
-            let taskDate: Date;
-            if (typeof task.due_date === 'string') {
-              // If it's a date string like "YYYY-MM-DD", create a date object
-              taskDate = new Date(task.due_date);
-            } else {
-              taskDate = new Date(task.due_date);
-            }
-            const taskDateNormalized = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate());
-            return taskDateNormalized.getTime() > todayNormalized.getTime();
+            const taskDateStr = typeof task.due_date === 'string' ? task.due_date : task.due_date.toISOString().split('T')[0];
+            const todayStr = new Date().toISOString().split('T')[0];
+            return taskDateStr > todayStr;
           });
           break;
         
@@ -71,22 +46,14 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
         case 'personal':
           const personalList = lists.find(list => list.name.toLowerCase() === 'personal');
           if (personalList) {
-            console.log('Filtering by Personal list ID:', personalList.id);
-            filtered = filtered.filter(task => {
-              console.log('Task list_id:', task.list_id, 'Personal list ID:', personalList.id);
-              return task.list_id === personalList.id;
-            });
+            filtered = filtered.filter(task => task.list_id === personalList.id);
           }
           break;
         
         case 'work':
           const workList = lists.find(list => list.name.toLowerCase() === 'work');
           if (workList) {
-            console.log('Filtering by Work list ID:', workList.id);
-            filtered = filtered.filter(task => {
-              console.log('Task list_id:', task.list_id, 'Work list ID:', workList.id);
-              return task.list_id === workList.id;
-            });
+            filtered = filtered.filter(task => task.list_id === workList.id);
           }
           break;
         
@@ -106,7 +73,6 @@ export function useTaskFiltering(tasks: Task[], activeFilter: string, searchQuer
       }
     }
 
-    console.log('Filtered tasks result:', filtered.length); // Debug log
     return filtered;
   }, [tasks, lists, activeFilter, searchQuery]);
 
